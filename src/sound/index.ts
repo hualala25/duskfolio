@@ -71,7 +71,7 @@ type Env = {
   AudioContext?: AudioCtor;
   webkitAudioContext?: AudioCtor;
   navigator?: { audioSession?: { type: string }; userActivation?: { isActive: boolean }; connection?: { saveData?: boolean } };
-  document?: Pick<Document, "hidden" | "addEventListener" | "removeEventListener">;
+  document?: Pick<Document, "hidden" | "addEventListener" | "removeEventListener"> & { readyState?: string };
   fetch?: (url: string) => Promise<Response>;
 };
 /** Without navigator.userActivation, a gesture counts as current for this long (ms). */
@@ -206,7 +206,19 @@ export function createSoundKit(opts: { volume?: number; base?: string; ambient?:
       else prewarmTimer = w.setTimeout!.call(w, prewarm, PREWARM_RETRY);
     });
   };
-  if (w?.setTimeout) prewarmTimer = w.setTimeout.call(w, prewarm, PREWARM_AFTER);
+  if (w?.setTimeout) {
+    // duskfolio (2026-11-09): the sound files wait for the page to be loaded. They used to be fetched 2.5 s after
+    // the page came up — right while the first screen was still downloading its own assets, and on a slow
+    // connection sixty small requests for the foley took the connections the engine's three.js needed.
+    // The sounds are only wanted once a visitor touches something, so they go last.
+    const afterLoad = () => {
+      if (prewarmTimer !== undefined) return;
+      prewarmTimer = w.setTimeout!.call(w, prewarm, PREWARM_AFTER);
+    };
+    const doc = env().document;
+    if (doc && doc.readyState !== "complete") w.addEventListener("load", afterLoad, { once: true });
+    else afterLoad();
+  }
 
   /** Inside a gesture right now (transient user activation), or within GESTURE_WINDOW of one where that is not exposed. */
   const activated = () => {
