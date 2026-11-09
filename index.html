@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>duskfolio</title>
+    <meta name="description" content="A desk at dusk with three booklets on it: an assignment album, a paper album and an academic folio with a clear pouch." />
+    <!-- title, description and lang above are filled in from profile/ at build time (vite.config.ts) -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content="duskfolio" />
+    <meta property="og:description" content="" />
+    <meta name="theme-color" content="#f0e7e1" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f0e7e1'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%23a63b4e'/%3E%3C/svg%3E" />
+    <style>
+      /* 薄暮, the desk, before the stylesheet arrives: no white flash */
+      html { background: #f0e7e1; color-scheme: light; }
+    </style>
+  </head>
+  <body>
+    <!-- the safe areas, read by src/app/layout.ts (the book box keeps clear of a notch) -->
+    <div id="safe-probe" aria-hidden="true" style="position: fixed; left: 0; top: 0; visibility: hidden; pointer-events: none; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px)"></div>
+    <div id="root"></div>
+    <script type="module" src="/src/app/main.tsx"></script>
+  </body>
+</html>
