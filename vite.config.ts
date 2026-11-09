@@ -77,5 +77,27 @@ function preloadEngine(): Plugin {
   };
 }
 
+/**
+ * The faces come from public/fonts/ (scripts/font-subset.py): the fontsource packages' own slices are
+ * not shipped.
+ *
+ * The fontsource CSS registers every slice of a face, and each url() it names is a file the build
+ * emits — 1259 files, 37 MB, of which a visitor's browser would fetch sixty-three on the first
+ * screen. The site's own faces are the same typefaces subset to the characters this site can draw
+ * (twelve files, 2.2 MB), so the packages' slices are dropped from the build: a face the subset
+ * lacks falls through to the system face in the stack.
+ */
+function dropFontSlices(): Plugin {
+  return {
+    name: "folio:drop-font-slices",
+    enforce: "pre",
+    load(id) {
+      // the packages' CSS: replaced by the site's own (public/fonts.css)
+      if (/@fontsource\/(noto-sans-sc|noto-serif-sc|shippori-mincho|zen-kaku-gothic-new|klee-one)\/\d+\.css/.test(id)) return "/* the site's own faces (public/fonts.css) */";
+      return;
+    },
+  };
+}
+
 /** `base: "./"`: every URL the build writes is relative, so the same files work at a domain's root and under a sub-path (GitHub Pages' /<repo>/). */
-export default defineConfig({ base: "./", plugins: [woff2Only(), profileMeta(), preloadEngine(), react()], server: { port: 5188, host: "127.0.0.1" } });
+export default defineConfig({ base: "./", plugins: [woff2Only(), dropFontSlices(), profileMeta(), preloadEngine(), react()], server: { port: 5188, host: "127.0.0.1" } });

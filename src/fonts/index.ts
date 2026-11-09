@@ -348,10 +348,22 @@ async function registerHan(role: Role, load: () => Promise<{ default: HanSource 
 }
 
 /** The faces per (role, Han[, weight]). Static specifiers so Vite emits each as its own lazy chunk. */
+/**
+ * The site's own Chinese faces (scripts/font-subset.py writes public/fonts.css).
+ *
+ * The fontsource packages ship their Chinese faces as ~100 unicode-range slices each. A browser asks
+ * for the slices whose range holds a character it is about to draw — but the first screen needed
+ * sixty-three of them, and on a slow link those small requests filled every connection the browser
+ * would open, so the engine's three.js waited behind them.
+ *
+ * The site's own faces are the same typefaces subset to the characters this site can draw: one file
+ * a weight, one request each, a fraction of the bytes. They carry the same family names, so nothing
+ * else in the engine changes.
+ */
 const CSS: Record<string, () => Promise<unknown>> = {
-  "serif-zh": () => registerHan("serif", () => import("./han-serif")),
-  "sans-zh": () => registerHan("sans", () => import("./han-sans")),
-  "hand-zh": () => registerHan("hand", () => import("./han-hand")),
+  "serif-zh": () => importCssFile("fonts.css"),
+  "sans-zh": () => importCssFile("fonts.css"),
+  "hand-zh": () => importCssFile("fonts.css"),
   "serif-ja-400": () => import("@fontsource/shippori-mincho/400.css"),
   "serif-ja-500": () => import("@fontsource/shippori-mincho/500.css"),
   "serif-ja-600": () => import("@fontsource/shippori-mincho/600.css"),
@@ -362,6 +374,33 @@ const CSS: Record<string, () => Promise<unknown>> = {
 const cssLoads = new Map<string, Promise<void>>();
 /** CSS that has been applied (its @font-face rules exist), so document.fonts.check() can be trusted for its family. */
 const cssDone = new Set<string>();
+
+/**
+ * The site's own face CSS (public/fonts.css), fetched and applied once.
+ *
+ * It is a plain stylesheet with @font-face rules, so it can simply be linked into the document: the
+ * browser then knows the families and fetches the files when a character needs them. The file's own
+ * URL is relative to the page, so it works at a domain's root and under a sub-path alike.
+ */
+function importCssFile(file: string): Promise<void> {
+  if (typeof document === "undefined") return Promise.resolve();
+  const id = `duskfolio:${file}`;
+  let el = document.getElementById(id) as HTMLLinkElement | null;
+  if (!el) {
+    el = document.createElement("link");
+    el.id = id;
+    el.rel = "stylesheet";
+    el.href = file;
+    document.head.appendChild(el);
+  }
+  // the link's load event: the @font-face rules exist afterwards
+  return new Promise<void>((resolve) => {
+    if (el!.sheet) return resolve();
+    el!.addEventListener("load", () => resolve(), { once: true });
+    el!.addEventListener("error", () => resolve(), { once: true });
+  });
+}
+
 function importCss(key: string): Promise<void> {
   let p = cssLoads.get(key);
   if (!p) {
