@@ -12,6 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "bun test src",
     "docx": "bun scripts/docx.ts",
+    "sync": "bun scripts/sync-content.ts",
+    "publish": "bun scripts/publish.ts",
     "seal": "bun scripts/seal.ts"
   },
   "dependencies": {
@@ -34,6 +36,7 @@
     "@vitejs/plugin-react": "^5.0.0",
     "playwright-core": "^1.63.0",
     "typescript": "^5.9.3",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "yaml": "^2.9.1"
   }
 }

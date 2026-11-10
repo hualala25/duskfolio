@@ -35,6 +35,8 @@ export const BED_RAW = "https://raw.githubusercontent.com/hualala25/images/main/
 export function bed(file: string): string {
   if (!file) return file;
   if (/^(https?:)?\/\//.test(file) || file.startsWith("/") || file.startsWith("data:")) return file;
+  // 站点自己的 public/ 资源（sync 从课程文件夹复制过来的图）：原样交给浏览器，按 base 解析
+  if (/^(images|papers|photos)\//.test(file)) return file;
   return BED_PAGES + file;
 }
 
