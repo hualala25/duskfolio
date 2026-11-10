@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "bun test src",
+    "docx": "bun scripts/docx.ts",
     "seal": "bun scripts/seal.ts"
   },
   "dependencies": {
