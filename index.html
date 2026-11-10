@@ -16,6 +16,43 @@
       /* 薄暮, the desk, before the stylesheet arrives: no white flash */
       html { background: #f0e7e1; color-scheme: light; }
     </style>
+    <script>
+      /*
+       * 缓存的自救：这个页面最多会被缓存十分钟，而每次构建都会换掉 JS 的文件名。
+       * 于是拿着旧页面的访客会去要一个已经不存在的脚本 —— 加载失败，页面一片空白，
+       * 刷新几次还是空白（还是那份旧的 HTML）。
+       *
+       * 这里盯着脚本的加载失败（模块脚本的 error 不冒泡，所以用捕获），失败就绕开缓存
+       * 重开一次。sessionStorage 只让它试一次：服务器真挂了的时候不能无限刷新。
+       */
+      (function () {
+        try {
+          var KEY = "duskfolio:reload";
+          var once = function () {
+            if (sessionStorage.getItem(KEY)) return;
+            sessionStorage.setItem(KEY, "1");
+            var u = location.pathname + location.search + (location.search ? "&" : "?") + "_r=" + Date.now() + location.hash;
+            location.replace(u);
+          };
+          addEventListener(
+            "error",
+            function (e) {
+              var t = e.target;
+              if (t && t.tagName === "SCRIPT") once();
+            },
+            true
+          );
+          // 页面跑起来了就清掉标记，下一次构建失效时还能再救一次
+          addEventListener("load", function () {
+            setTimeout(function () {
+              sessionStorage.removeItem(KEY);
+            }, 5000);
+          });
+        } catch (_) {
+          /* 没有 sessionStorage 就算了，至少别在这里抛错 */
+        }
+      })();
+    </script>
   </head>
   <body>
     <!-- the safe areas, read by src/app/layout.ts (the book box keeps clear of a notch) -->

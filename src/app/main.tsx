@@ -18,6 +18,18 @@ import "./app.css";
  * ?sample=zh), else the visitor's last choice, else English (never the browser's language); the page's switch changes it in place.
  */
 
+/*
+ * A cached page can outlive the files it names: index.html is cached for ten minutes, and every build
+ * renames its chunks, so a visitor holding yesterday's HTML asks for a script that no longer exists and
+ * gets a blank page. When a dynamic import fails that way Vite fires this event; reloading picks up the
+ * new HTML. (The entry chunk itself failing is caught by the inline guard in index.html — nothing here
+ * would run then.)
+ */
+addEventListener("vite:preloadError", (e) => {
+  e.preventDefault();
+  location.reload();
+});
+
 initFrame();
 preloadLatin();
 
