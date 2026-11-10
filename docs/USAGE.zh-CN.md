@@ -2,6 +2,18 @@
 
 给你的操作手册。看完这一份，加文章、删文章、换图、上线都不用再问人。
 
+> **2026-11-10 起：内容搬到了文件夹，不再改代码。**
+>
+> 现在的内容在：
+> `~/Desktop/学习/课程/新媒体交互设计/Assignment2/`
+>
+> 那里有自己的 `README.md`，讲怎么加论文、加作业、传图。
+> `profile/content.ts` 只剩类型和一层薄包装，真正的内容由 `bun run sync`
+> 从 YAML 生成到 `profile/generated.ts`。
+>
+> **所以下面第三、四节（改 content.ts 的写法）已经过时**，看文件夹里的 README 就行。
+> 第二、五、六、七、八节仍然有效（上线流程、图片规格、数量断言、字数上限、排错）。
+
 ---
 
 ## 一、先搞清楚三层东西
@@ -25,30 +37,32 @@ pages-repo/Assignment2/   ← 上线用的那份，就是 dist 复制过去的
 
 ---
 
-## 二、改完怎么上线（最常用的一套）
+## 二、改完怎么上线（一条命令）
 
 ```bash
 cd /Users/luoyumo/WorkBuddy/2026-11-09-14-05-19/duskfolio
-
-# ① 本地看效果（改代码会自动刷新）
-bun run dev
-#   打开 http://localhost:5188
-
-# ② 检查内容有没有超字数、形状对不对
-bun test src
-
-# ③ 构建
-bun run build
-
-# ④ 复制到上线目录
-rsync -a --delete --exclude '.gitkeep' dist/ ../pages-repo/Assignment2/
-
-# ⑤ 推送（推完约 2 分钟自动上线）
-cd ../pages-repo
-git add -A
-git commit -m "更新内容"
-git push
+bun run publish
 ```
+
+它依次做五件事，任何一步出错都停下，不会带着错上线：
+
+1. **sync** —— 读文件夹里的 YAML，生成 `profile/generated.ts`，复制本地图片
+2. **test** —— 364 个测试（形状、字数、排版约束）
+3. **build** —— 构建
+4. **推源码** —— AGPL 要求公开源码
+5. **发布** —— 同步到 `pages-repo/Assignment2/` 并推送
+
+推完约 2 分钟自动上线。
+
+### 只想在本地看，先不上线
+
+```bash
+bun run sync        # 文件夹 → 站点内容
+bun run dev         # 打开 http://localhost:5188，改代码即时刷新
+```
+
+注意：改 YAML 之后要**再跑一次 `bun run sync`**，`dev` 才会看到新内容
+（YAML 是构建期读的，不是运行时）。
 
 上线地址：**https://hualala25.github.io/Assignment2/**
 
