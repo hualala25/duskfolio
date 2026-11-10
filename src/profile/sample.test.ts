@@ -151,10 +151,12 @@ describe("the folio", () => {
     expect(sampleZh.items.map((i) => i.kind)).toEqual(sample.items.map((i) => i.kind));
   });
 
-  test("every thing carries an anecdote and a story", () => {
+  test("every thing carries a story (and the anecdote is gone)", () => {
     for (const i of sample.items) {
-      expect(i.anecdote!.trim().length).toBeGreaterThan(10);
+      // the story is the thing worth reading: how it came about. The anecdote described the
+      // stock's weight and size, which the spec rows then said again — dropped 2026-11-10.
       expect(i.story!.trim().length).toBeGreaterThan(20);
+      expect(i.anecdote).toBeUndefined();
     }
   });
 });

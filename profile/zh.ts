@@ -61,7 +61,8 @@ export const profileZh: Profile = {
   role: "网络与新媒体 · 智能传播方向",
   location: IDENTITY.location,
   timezone: IDENTITY.timezone,
-  bio: "网络与新媒体专业大二学生，方向是智能传播。这个页面上放着我的课程作业和论文：左边一册是每门课的作业，右边一册是写过的论文，文件夹里是一份履历。",
+  // 身份由 role 说，结构由目录说 —— bio 只说「在想什么」，不重复前两者
+  bio: "关心媒介内容怎么被生产、怎么被算法接住，以及读者在其中还剩下多少主动性。",
   coverTitle: `${IDENTITY.nameLocal} · 课程作业与论文`,
   seal,
   // ⚠️ 换成你自己 fork 后的仓库地址（AGPL-3.0 要求公开源码，页脚会链过去）
@@ -76,13 +77,7 @@ export const profileZh: Profile = {
       kind: "card",
       id: "card",
       label: "名帖",
-      anecdote: "一张对折的棉浆纸名片，正面只有名字、方向，和一个小圆点。",
       story: "名片是给自己印的，印完发现比作业还花时间。里面留给真正会回信的人。",
-      specs: [
-        { k: "纸张", v: "600 克棉浆纸" },
-        { k: "印刷", v: "活版，单色" },
-        { k: "尺寸", v: "91 × 55 毫米，对折" },
-      ],
       front: { name: IDENTITY.nameLocal, role: "网络与新媒体 · 智能传播方向", tagline: "把想说的话写清楚" },
       inside: [
         { k: "邮箱", v: "hualala25@users.noreply.github.com" },
@@ -96,14 +91,13 @@ export const profileZh: Profile = {
       kind: "resume",
       id: "resume",
       label: "学术履历",
-      anecdote: "两页：一页写学业与竞赛，一页写项目、工具和技能。",
       story: "写这份履历的时候才发现自己一年里做了不少事，但都散在文件夹里。整理出来，才算有了形状。",
       specs: [
-        { k: "页数", v: "2" },
         { k: "更新", v: "2026 年 11 月" },
         { k: "语言", v: "中文 · 英文" },
       ],
-      summary: "网络与新媒体专业大二学生，方向智能传播。关心媒介内容怎么被生产、怎么被算法接住，以及读者在其中还剩下多少主动性。",
+      // bio 说「在想什么」，summary 说「做过什么」—— 同一句话不要印两遍
+      summary: "网络与新媒体专业大二学生，智能传播方向。做过课程作业、学年论文和一次竞赛；关心的始终是同一件事：内容由谁生产，又落到谁手里。",
       // ⚠️ 下面三段经历的具体内容（融媒体中心实习、1.2 万阅读、竞赛入围）是我按你的情况编的，
       //    换成你真实做过的事：改了这里，页面上印的就是真的了。
       experience: [
@@ -125,13 +119,7 @@ export const profileZh: Profile = {
       kind: "ticket",
       id: "ticket",
       label: "选题票",
-      anecdote: "一张选题票：赛事、题目、赛区、截止时间，都印在一张 150 毫米的卡纸上。",
       story: "这是第九届数字编辑创新大赛的选题凭证。改过七版题目，最后留下的是最笨的那一个：把长征九十周年，交给一个具体的人来走。",
-      specs: [
-        { k: "赛事", v: "第九届数字编辑创新大赛" },
-        { k: "赛区", v: "陕西分赛区" },
-        { k: "形式", v: "交互式叙事专题" },
-      ],
       event: "数字编辑创新大赛",
       talk: "长征胜利九十周年：一条可交互的叙事路径",
       date: "2026-09-20",
@@ -146,8 +134,7 @@ export const profileZh: Profile = {
       kind: "polaroid",
       id: "polaroid",
       label: "照片",
-      anecdote: "图书馆四楼靠窗的位置，19:40，天快黑了。",
-      story: "那天在改学年论文的第八页，改到一半抬头，窗外的天正好是这个颜色。就用这个当拍立得的第一张。",
+      story: "那天在改学年论文的第八页，改到一半抬头，窗外的天正好是这个颜色。就用它当了第一张。",
       caption: "图书馆，19:40",
       tint: "#d9c0c6",
       place: "图书馆",
@@ -158,9 +145,8 @@ export const profileZh: Profile = {
       kind: "note",
       id: "note",
       label: "便笺",
-      anecdote: "一筆箋是一种窄长的信纸，只写几行：比一封信短，比一条消息多一点心意。",
       story: "这张便笺放在文件夹的最后，写给第一个把它抽出来的人。",
-      text: "欢迎来翻这个本子。左边那册是课程作业，右边那册是论文，中间文件夹里是我的履历。哪一页看不明白，写信问我。",
+      text: "欢迎来翻这个本子。哪一页看不明白，写信问我。",
       from: IDENTITY.nameLocal,
       date: "2026-11-08",
     },

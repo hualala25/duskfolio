@@ -106,7 +106,7 @@ export function pageRuns(p: Profile, t: Dict): FontRun[] {
     ...run("sans", 500, han, t.colophon.email, ...p.links.map((l) => l.label)),
     ...run("serif", 400, ch, ...booklets.map((b) => b.name)),
     ...run("serif", 500, ch, ...booklets.map((b) => b.local)),
-    ...run("sans", 400, ch, t.handling.resume, t.handling.cards, t.handling.postcards(p.albums.postcards.length), t.handling.closed, t.hint.resume, t.hint.cards, t.hint.postcards, t.hint.closed),
+    ...run("sans", 400, ch, t.handling.resume, t.handling.cards, t.handling.postcards(p.albums.postcards.length), t.handling.closed),
     ...run("sans", 500, ch, c.open, c.close, c.closeFolio, c.closeFolioShort, c.shake, c.tilt, t.profile.open, t.colophon.sound, t.colophon.on, t.colophon.off, t.colophon.textVersion, t.colophon.source),
   ];
 }

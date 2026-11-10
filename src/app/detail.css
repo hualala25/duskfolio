@@ -12,7 +12,7 @@ dialog.lb { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100d
 /* .8, not .6: the 藍鉄 leather spine and the polaroid under the veil must not read through as dark shapes (the stage canvas also
    goes soft and half-transparent while a detail is up, paused: app.css). No backdrop-filter: a full-viewport filter that fades in
    re-filters the whole page every frame */
-dialog.lb::backdrop { background: rgb(250 240 238 / .62); animation: xf-in .36s var(--ease); }
+dialog.lb::backdrop { background: rgb(250 240 238 / .55); animation: xf-in .36s var(--ease); }
 @media (prefers-reduced-transparency: reduce) { dialog.lb::backdrop { background: rgb(250 240 238 / .94); } }
 dialog.lb[data-closing]::backdrop { opacity: 0; transition: opacity .3s var(--ease); }
 dialog.lb[data-closing] .lb-frame { opacity: 0; transition: opacity .3s var(--ease); }
@@ -254,7 +254,7 @@ dialog.lb[data-closing] .lb-obj { translate: 0 10px; transition: translate .3s v
 .doc-none { font: var(--gw4) calc(13 * var(--u))/calc(22 * var(--u)) var(--gothic); color: var(--kohaku); }
 
 /* the text itself: a measure a Chinese paper sets well (about 34 characters a line) */
-.doc-body { max-width: 38em; margin-inline: auto; }
+.doc-body { max-width: 34em; margin-inline: auto; }
 .doc-p { margin: 0 0 1.05em; font: 400 calc(15.5 * var(--u))/calc(30 * var(--u)) var(--mincho); color: var(--tetsu); text-align: justify; text-justify: inter-ideograph; text-wrap: pretty; }
 /* the headings: a Chinese paper's own shape — 一、 for a chapter, （一） for a section */
 .doc-h { margin: 2.1em 0 .8em; font: 500 calc(19 * var(--u))/calc(30 * var(--u)) var(--mincho); color: var(--sumi); letter-spacing: .01em; text-wrap: balance; }

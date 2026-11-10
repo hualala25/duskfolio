@@ -199,7 +199,7 @@ function Toc({ profile, tab, onTab }: { profile: Profile; tab: Tab; onTab(t: Tab
     refs.current[(i + d + BOOKLETS.length) % BOOKLETS.length]?.focus();
   };
   return (
-    <nav className="toc" aria-label={t.nav.booklets} onKeyDown={onKey} style={{ "--i": index } as CSSProperties}>
+    <nav className="toc" aria-label={t.nav.booklets} onKeyDown={onKey} style={{ "--i": index, "--c": caseHex(booklet(tab)).base } as CSSProperties}>
       <i className="toc-disc" aria-hidden="true" />
       <ol>
         {BOOKLETS.map((b, i) => {

@@ -390,9 +390,9 @@ export function App({ profile: firstProfile = sample, folio, lang: firstLang, st
         : tab === "cards"
           ? t.handling.cards
           : t.handling.postcards(profile.albums.postcards.length);
-  // the phone hint is about the 3D booklet (tap the closed cover; tilt, swipe a page until the first touch): not over the flat
-  // book or the printed version. A tablet-sized window driven by a mouse reads the desk's handling line instead (no swipes, no tilt).
-  const hint = fallback || flat || !stage?.ready ? "" : !stage.open ? (frame.coarse ? t.hint.closed : t.handling.closed) : hinted ? "" : !frame.coarse ? handling : t.hint[tab];
+  // the phone's bottom line says what the desk's handling line says: the copy names no device ("翻一页，点开看作业" reads
+  // the same on a trackpad and under a thumb), so there is one string to keep, not two
+  const hint = fallback || flat || !stage?.ready || hinted ? "" : handling;
 
   let body: ReactNode;
   if (view === "json") body = <JsonView profile={profile} />;

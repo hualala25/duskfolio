@@ -45,7 +45,8 @@ export const profile: Profile = {
   role: "Media & New Media · Intelligent Communication",
   location: IDENTITY.locationEn,
   timezone: IDENTITY.timezone,
-  bio: "A second-year undergraduate in Media and New Media, working on intelligent communication. This page holds my coursework and my papers: an album of assignments on the left, an album of papers on the right, and a folder with my CV.",
+  // the role says who I am, the contents line says what is here — the bio says what I think about
+  bio: "Interested in how media content is made, how algorithms catch it, and how much agency a reader is left with.",
   coverTitle: `${IDENTITY.name} · Coursework & Papers`,
   // ⚠️ your own fork's URL — the AGPL-3.0 asks you to offer the source of what you deploy
   source: "https://github.com/hualala25/duskfolio",
@@ -59,13 +60,7 @@ export const profile: Profile = {
       kind: "card",
       id: "card",
       label: "Contact card",
-      anecdote: "One folded sheet of cotton stock: a name, a direction, and one small dot.",
       story: "I printed it for myself and then spent longer on it than on most of my coursework. What is inside is for whoever actually writes back.",
-      specs: [
-        { k: "Stock", v: "600 gsm cotton board" },
-        { k: "Print", v: "Letterpress, one colour" },
-        { k: "Size", v: "91 × 55 mm, folded" },
-      ],
       front: { name: IDENTITY.name, role: "Media & New Media · Intelligent Communication", tagline: "Say the thing clearly" },
       inside: [
         { k: "Email", v: "hualala25@users.noreply.github.com" },
@@ -79,14 +74,13 @@ export const profile: Profile = {
       kind: "resume",
       id: "resume",
       label: "Academic CV",
-      anecdote: "Two pages: one for study and competitions, one for projects, tools and skills.",
       story: "Writing it out, I found I had done a good deal in a year — but it was scattered across folders. Put on one page, it finally has a shape.",
       specs: [
-        { k: "Pages", v: "2" },
         { k: "Updated", v: "November 2026" },
         { k: "Languages", v: "Chinese · English" },
       ],
-      summary: "Second-year undergraduate in Media and New Media, specialising in intelligent communication. Interested in how media content is made, how algorithms catch it, and how much agency a reader is left with.",
+      // the bio says what I think about; the summary says what I have done — one of each, not the same line twice
+      summary: "Second-year undergraduate in Media and New Media, intelligent communication. Coursework, a term paper and one competition so far; the same question runs through all of it: who makes the content, and whose hands it lands in.",
       // ⚠️ the three entries below (the media-centre internship, the 12,000 read count, the
       //    competition entry) were written to fit your situation — replace them with what you
       //    actually did, and the page will print the truth.
@@ -109,13 +103,7 @@ export const profile: Profile = {
       kind: "ticket",
       id: "ticket",
       label: "Assignment slip",
-      anecdote: "A slip: competition, title, division and deadline, printed on 150 mm of card.",
       story: "The topic chit for the Digital Editing Innovation Competition. The title went through seven drafts; the one that survived is the plainest — hand the Long March to one particular person and let them walk it.",
-      specs: [
-        { k: "Competition", v: "The 9th Digital Editing Innovation Competition" },
-        { k: "Division", v: "Shaanxi" },
-        { k: "Form", v: "Interactive narrative" },
-      ],
       event: "Digital Editing Competition",
       talk: "The Long March at ninety: an interactive path",
       date: "2026-09-20",
@@ -130,7 +118,6 @@ export const profile: Profile = {
       kind: "polaroid",
       id: "polaroid",
       label: "Photo",
-      anecdote: "Fourth floor of the library, window seat, 19:40, just before dark.",
       story: "I was on page eight of the term paper when I looked up and the sky outside was exactly this colour. It became the first print.",
       caption: "Library, 19:40",
       tint: "#d9c0c6",
@@ -142,9 +129,8 @@ export const profile: Profile = {
       kind: "note",
       id: "note",
       label: "Note",
-      anecdote: "A 一筆箋 is a long narrow sheet for a few lines: shorter than a letter, a little more care than a message.",
       story: "The note sits at the back of the folder, written for whoever pulls it out first.",
-      text: "Welcome to the notebook. The album on the left is coursework, the one on the right is papers, and the folder in the middle is my CV. If a page does not make sense, write to me.",
+      text: "Welcome to the notebook. If a page does not make sense, write to me.",
       from: IDENTITY.name,
       date: "2026-11-08",
     },

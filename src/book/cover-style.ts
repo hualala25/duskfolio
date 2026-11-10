@@ -11,8 +11,8 @@ import type { CoverColor, CoverFoil, CoverMaterial } from "./cover";
  */
 export const COVER_HEX: Record<CoverColor, { base: string; frost: string; liner: string; dark: boolean }> = {
   shiro: { base: "#ece2dd", frost: "#f6ece9", liner: "#f6efea", dark: false },
-  momo: { base: "#e6b0a8", frost: "#fbe6e3", liner: "#fdf0ee", dark: false },
-  sakura: { base: "#e9bfc9", frost: "#fce9ec", liner: "#fdf2f3", dark: false },
+  momo: { base: "#e0a096", frost: "#fce4dd", liner: "#fdf0ec", dark: false },
+  sakura: { base: "#dca9bd", frost: "#f3dde9", liner: "#f9edf2", dark: false },
   usubeni: { base: "#d99aa8", frost: "#f0cdd6", liner: "#f4e0e5", dark: false },
   fuji: { base: "#bfb0ce", frost: "#dfd7ea", liner: "#e9e3f0", dark: false },
   kohaku: { base: "#d6ae86", frost: "#efd8bd", liner: "#f3e2cd", dark: false },
@@ -21,7 +21,7 @@ export const COVER_HEX: Record<CoverColor, { base: string; frost: string; liner:
   ro: { base: "#3b2d34", frost: "#8f7f86", liner: "#48363e", dark: true },
   sumi: { base: "#2b1f24", frost: "#8b757c", liner: "#392931", dark: true },
   // duskfolio: the folio (a light liner in a dark case), the assignments, the papers
-  enji: { base: "#8f2f43", frost: "#e9cad0", liner: "#f0dde1", dark: true },
+  enji: { base: "#8f2f43", frost: "#dcb8c2", liner: "#ecd8dd", dark: true },
 };
 
 /**

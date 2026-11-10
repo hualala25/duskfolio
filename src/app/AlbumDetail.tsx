@@ -163,12 +163,15 @@ export function AlbumDetail({ profile, kind, id, onSelect, onClose, fallbackFocu
   const index = list.findIndex((c) => c.id === id);
   const entry = list[index];
   const [back, setBack] = useState(false);
-  /** 读全文：卡片本身让位给它的正文（论文或作业的全文）。 */
-  const [reading, setReading] = useState(false);
+  /**
+   * 读全文：卡片本身让位给它的正文（论文或作业的全文）。null 是「还没选过」—— 有正文的条目打开即读，
+   * 因为访客来是为了内容，不该先看到一张封面、再点一次才读到。点「回到卡片」才置 false。
+   */
+  const [reading, setReading] = useState<boolean | null>(null);
   const { copied, copy } = useCopy();
   const phone = f.cls === "p" || f.cls === "t";
   useEffect(() => setBack(false), [id]);
-  useEffect(() => setReading(false), [id]);
+  useEffect(() => setReading(null), [id]);
   const isPostcard = kind === "postcards";
   const pc = entry as Postcard | undefined;
   const ac = entry as AlbumCard | undefined;
@@ -209,43 +212,23 @@ export function AlbumDetail({ profile, kind, id, onSelect, onClose, fallbackFocu
   const href = isPostcard ? pc?.href : ac?.href;
   // the body, when the item has one (a paper or an assignment's own text)
   const docName = isPostcard ? pc?.doc : ac?.doc;
+  const showDoc = !!docName && (reading ?? true);
   const copyHex = () => {
     if (hex) void copy(hex);
   };
   // the card sits in its own little rect; the document, when it is on the page, takes the album's whole
   // spread (the same width the booklets use — a document wants a proper measure, not a card's)
-  const rect = reading ? docRect(f) : heldRect(f, kind);
+  const rect = showDoc ? docRect(f) : heldRect(f, kind);
 
+  // 读者真正会看的：这篇论文发在哪里、什么时候。作者是他自己，色值是设计参数 —— 都不印。
+  // 作业卡则一行都不列：课程号是标题，题目是副题，说明在下面。
   const rows: Row[] = isPostcard
     ? [
         { k: t.spec.place, v: pc!.place },
         ...(pc!.date ? [{ k: t.spec.postmarked, v: t.date(pc!.date) }] : []),
-        { k: t.spec.from, v: pc!.from },
         ...(pc!.credit ? [{ k: t.spec.credit, v: pc!.credit.replace(/^(Photo|摄影|攝影|写真)\s*[:：]\s*/i, "") }] : []),
       ]
-    : [
-        ...(hex
-          ? [
-              {
-                k: t.spec.colour,
-                v: (
-                  <button type="button" className="v hex" onClick={copyHex} aria-label={`${t.controls.copyHex} ${hex}`}>
-                    {copied ? (
-                      <>
-                        <i className="cdot" aria-hidden="true" />
-                        {t.controls.copied}
-                      </>
-                    ) : (
-                      hex
-                    )}
-                  </button>
-                ),
-              },
-            ]
-          : []),
-        // 色見本 is Japanese on an English page (Shippori's sibling Zen Kaku), 传统色 Chinese on a Chinese one
-        withLang({ k: t.spec.series, v: t.spec.seriesValue }, t.lang === "zh" ? (profile.lang ?? "zh-CN") : "ja", han),
-      ];
+    : [];
 
   const caption = (
     <>
@@ -288,7 +271,7 @@ export function AlbumDetail({ profile, kind, id, onSelect, onClose, fallbackFocu
   );
 
   // the card itself, or — when the item has a body and the reader asked for it — the body on the page
-  const object = reading ? (
+  const object = showDoc ? (
     <div className="held doc-read" data-kind={kind}>
       <DocumentBody name={docName} cls={f.cls} />
     </div>
@@ -331,13 +314,13 @@ export function AlbumDetail({ profile, kind, id, onSelect, onClose, fallbackFocu
       <span className="cg">
       {docName ? (
         <>
-          <Word onClick={() => setReading((r) => !r)} pressed={reading}>
-            {reading ? t.controls.backToCard : phone ? t.controls.readFullShort : t.controls.readFull}
+          <Word onClick={() => setReading(!showDoc)} pressed={showDoc} className="primary">
+            {showDoc ? t.controls.backToCard : t.controls.readFull}
           </Word>
           <Sep />
         </>
       ) : null}
-      {!reading && (isPostcard ? (
+      {!showDoc && (isPostcard ? (
         <>
           <Word onClick={turn} pressed={back}>
             {back ? t.controls.turnBack : t.controls.turnOver}
@@ -359,7 +342,7 @@ export function AlbumDetail({ profile, kind, id, onSelect, onClose, fallbackFocu
 
   const heldName = isPostcard ? t.held.postcard : t.held.colour;
   return (
-    <Lightbox labelledBy={titleId} kind={kind} onClose={onClose} onPrev={() => go(-1)} onNext={() => go(1)} onSpace={reading ? undefined : isPostcard ? turn : hex ? copyHex : undefined} {...(fallbackFocus ? { fallbackFocus } : {})}>
+    <Lightbox labelledBy={titleId} kind={kind} onClose={onClose} onPrev={() => go(-1)} onNext={() => go(1)} onSpace={showDoc ? undefined : isPostcard ? turn : undefined} {...(fallbackFocus ? { fallbackFocus } : {})}>
       <DetailFrame id={entry.id} profile={profile} rect={rect} hashira={{ local: heldName.local, latin: `${heldName.latin} · ${pad2(index + 1)}` }} caption={caption} controls={controls} object={object} />
     </Lightbox>
   );

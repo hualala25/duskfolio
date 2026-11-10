@@ -22,8 +22,6 @@ export type Dict = {
   /** the language switch (each language is named in itself: English · 中文) */
   langs: { label: string };
   handling: { resume: string; cards: string; postcards: (n: number) => string; closed: string; printed: string };
-  /** Phones, until the first touch: per booklet (a card album and a postcard album name what they hold), and on a closed one. */
-  hint: { resume: string; cards: string; postcards: string; closed: string };
   clock: (time: string, city?: string) => string;
   controls: {
     open: string;
@@ -61,7 +59,6 @@ export type Dict = {
     toolbar: string;
     /** the document's own words, read on the page (the paper or the assignment's body). */
     readFull: string;
-    readFullShort: string;
     /** back from the document to the card itself. */
     backToCard: string;
     /** the file the document came from (.docx), offered under the text. */
@@ -130,13 +127,12 @@ export const en: Dict = {
   nav: { booklets: "Booklets", skip: "Skip to the booklet" },
   langs: { label: "Language" },
   handling: {
-    resume: "Tilt the desk and the things inside will slide. Lift one out to read it.",
-    cards: "Turn a page by its edge, or with the arrow keys. Lift a card out to look closer.",
-    postcards: (n) => `${cap(enWord(n))} papers, ${enWord(n)} evenings. Turn the page to read the abstracts.`,
-    closed: "Click the cover to open it.",
+    resume: "Tilt, or lift one thing out to read it.",
+    cards: "Turn a page, then open an assignment.",
+    postcards: (n) => `${cap(enWord(n))} papers — turn a page, open one to read its abstract.`,
+    closed: "Open the cover.",
     printed: "This desk needs WebGL, so here is the printed version.",
   },
-  hint: { resume: "Tilt your phone, or lift a thing out.", cards: "Swipe to turn. Tap a card to lift it.", postcards: "Swipe to turn. Tap a postcard to lift it.", closed: "Tap the cover to open it." },
   clock: (time, city) => `Local time ${time}${city ? ` in ${city}` : ""}`,
   controls: {
     open: "Open",
@@ -169,7 +165,6 @@ export const en: Dict = {
     copied: "Copied",
     toolbar: "Controls",
     readFull: "Read the whole text",
-    readFullShort: "Read",
     backToCard: "Back to the card",
     original: "Original file",
   },
@@ -227,13 +222,12 @@ export const zh: Dict = {
   nav: { booklets: "册子", skip: "跳到册子" },
   langs: { label: "语言" },
   handling: {
-    resume: "倾斜桌面，袋里的东西会随之滑动。取出一件，就能细看。",
-    cards: "拖动页边或用方向键翻页。取出一张作业卡，可以看得更近。",
-    postcards: (n) => `${zhNum(n)}篇论文，${zhNum(n)}个黄昏。翻过这一页，读它们的摘要。`,
-    closed: "点一下封面，把它打开。",
+    resume: "倾斜，或取出一件细看。",
+    cards: "翻一页，点开看作业。",
+    postcards: (n) => `${zhNum(n)}篇论文，翻一页读摘要。`,
+    closed: "点封面打开。",
     printed: "这张桌面需要 WebGL，下面是印刷版。",
   },
-  hint: { resume: "倾斜手机，或取出一件东西。", cards: "滑动翻页，轻点卡片取出。", postcards: "滑动翻页，轻点明信片取出。", closed: "点一下封面，把它打开。" },
   clock: (time, city) => `${city ? `${city}` : ""}当地时间 ${time}`,
   controls: {
     open: "打开",
@@ -252,7 +246,7 @@ export const zh: Dict = {
     pageOf: (i, n) => `第 ${i} 页，共 ${n} 页`,
     prev: "上一件",
     next: "下一件",
-    putBack: "放回去",
+    putBack: "放回",
     putBackShort: "放回",
     openIt: "打开",
     foldIt: "合上",
@@ -268,7 +262,6 @@ export const zh: Dict = {
     copied: "已复制",
     toolbar: "操作",
     readFull: "读全文",
-    readFullShort: "读全文",
     backToCard: "回到卡片",
     original: "原文件",
   },
