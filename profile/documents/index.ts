@@ -1,25 +1,22 @@
 /*
- * The documents: the bodies of the papers and the assignments, read on the page.
+ * 正文的登记处 —— 由 scripts/sync-content.ts 自动生成，别手改。
  *
- * A profile's card or postcard points at one of these by name (`doc: "ai-glasses"`), and the detail view
- * fetches it when you open that item — so a visitor who never opens a paper never downloads its body.
- *
- * To add one: run `bun run docx <file.docx> <name>` (it writes profile/documents/<name>.ts), then add a
- * line to the loaders below and point a card or a postcard at it.
+ * 卡片上写 doc: "名字"，详情视图打开时才下载那一篇（没打开的访客不会付出流量）。
+ * 现在有 2 篇：ai-glasses、heat-mirror
  */
 
 import type { Document } from "../../src/profile/document";
 
-/** The loaders: a name → the module that holds its body. */
+/** 名字 → 拿正文的那个模块。 */
 const loaders: Record<string, () => Promise<{ document: Document }>> = {
   "ai-glasses": () => import("./ai-glasses"),
   "heat-mirror": () => import("./heat-mirror"),
 };
 
-/** The names of the documents there are. */
+/** 有哪些正文。 */
 export const documentNames = (): string[] => Object.keys(loaders);
 
-/** A document's body, or null when there is none by that name. */
+/** 取一篇正文；没有就叫 null。 */
 export async function loadDocument(name: string | undefined): Promise<Document | null> {
   if (!name) return null;
   const loader = loaders[name];

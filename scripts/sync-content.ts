@@ -24,6 +24,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
 import { parse } from "yaml";
+import { readMarkdown } from "./md-doc";
 
 /** 内容的家。想换地方就改这里，或设环境变量 CONTENT_ROOT。 */
 const ROOT = process.env.CONTENT_ROOT ?? "/Users/luoyumo/Desktop/学习/课程/新媒体交互设计/Assignment2";
@@ -51,7 +52,8 @@ const sortedDirs = (dir: string): string[] => {
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
     .filter((n) => statSync(join(dir, n)).isDirectory())
-    .filter((n) => !n.startsWith("."))
+    // . 开头是系统文件；_ 开头当作草稿或模板，不上站
+    .filter((n) => !n.startsWith(".") && !n.startsWith("_"))
     .sort();
 };
 
@@ -84,6 +86,36 @@ function resolveImage(name: string | undefined, owner: string): string | undefin
   }
   // 不是本地文件：当图床文件名，原样交给 src/profile/bed.ts
   notes.push(`${owner} 的图 "${name}" 不在 images/ 里，按图床文件名处理`);
+  return name;
+}
+
+/* ─────────────────────────────── 正文 ─────────────────────────────── */
+
+/**
+ * 一个目录里的 Markdown → profile/documents/<name>.ts。
+ * 优先用「正文.md」，否则用第一个 .md（README.md 除外）。返回正文的名字。
+ */
+function syncDocs(dir: string, hint: string): string | undefined {
+  if (!existsSync(dir)) return undefined;
+  const mds = readdirSync(dir).filter((f) => /\.md$/i.test(f) && !/^readme\.md$/i.test(f));
+  if (!mds.length) return undefined;
+  const pick = mds.find((f) => /^正文\.md$/i.test(f)) ?? mds[0]!;
+  const name = /^正文\.md$/i.test(pick) ? hint : basename(pick, ".md");
+  const doc = readMarkdown(join(dir, pick));
+  // 正文里的图：images/ 里有同名的就用站点路径，否则当图床文件名
+  for (const b of doc.blocks) {
+    if (b.kind === "figure" && b.src) {
+      const r = resolveImage(b.src, `${pick} 的图`);
+      if (r) b.src = r;
+    }
+  }
+  const header =
+    `/* 由 scripts/sync-content.ts 从「${pick}」生成 —— 别手改，改那个 Markdown 再跑 bun run sync。 */\n\n` +
+    `import type { Document } from "../../src/profile/document";\n\n` +
+    `export const document: Document = ${JSON.stringify(doc, null, 2)};\n`;
+  mkdirSync(join(SITE, "profile", "documents"), { recursive: true });
+  writeFileSync(join(SITE, "profile", "documents", `${name}.ts`), header, "utf8");
+  notes.push(`正文 ${pick} → profile/documents/${name}.ts（${doc.blocks.length} 段）`);
   return name;
 }
 
@@ -151,7 +183,8 @@ for (const dirName of sortedDirs(join(ROOT, "courses"))) {
     zhCards.push({ name: String(zh.name ?? ""), note: String(zh.note ?? "") });
     enCards.push({ name: String(en.name ?? ""), note: String(en.note ?? "") });
     const src = resolveImage(zh.image, `${dirName} 第 ${i + 1} 张`);
-    const doc = zh.doc ? String(zh.doc) : undefined;
+    // 正文：yaml 写了 doc 就用它，否则看这个课的文件夹里有没有 Markdown
+    const doc = zh.doc ? String(zh.doc) : syncDocs(join(ROOT, "courses", dirName), `${dirName}-${i + 1}`);
     extra.push(src || doc ? { ...(src ? { src } : {}), ...(doc ? { doc } : {}) } : undefined);
     // 作业卡名太长会压边
     const len = [...String(zh.name ?? "")].length;
@@ -212,7 +245,9 @@ for (const dirName of sortedDirs(join(ROOT, "papers"))) {
   if (!/^#[0-9a-f]{6}$/i.test(color)) problems.push(`${dirName}：color "${color}" 要写成 #rrggbb`);
 
   const cover = resolveImage(y.cover ? String(y.cover) : undefined, dirName);
-  const docName = y.doc ? String(y.doc) : undefined;
+  // 正文：先看这个论文文件夹里有没有 Markdown（有就自动转），否则用 yaml 写的 doc
+  const docDir = join(ROOT, "papers", dirName);
+  const docName = syncDocs(docDir, id) ?? (y.doc ? String(y.doc) : undefined);
   if (docName && !existsSync(join(SITE, "profile", "documents", `${docName}.ts`))) {
     problems.push(`${dirName}：正文 "${docName}" 不存在（先跑 bun run docx 生成 profile/documents/${docName}.ts）`);
   }
@@ -264,6 +299,49 @@ export const PAPERS = ${ser(papers)};
 
 mkdirSync(join(SITE, "profile"), { recursive: true });
 writeFileSync(OUT, head + body, "utf8");
+
+// ── documents/index.ts：自动列出所有正文，加一篇不用手改这里 ──────────────
+const docsDir = join(SITE, "profile", "documents");
+const docNames = existsSync(docsDir)
+  ? readdirSync(docsDir)
+      .filter((f) => f.endsWith(".ts") && f !== "index.ts")
+      .map((f) => f.replace(/\.ts$/, ""))
+      .sort()
+  : [];
+writeFileSync(
+  join(docsDir, "index.ts"),
+  `/*
+ * 正文的登记处 —— 由 scripts/sync-content.ts 自动生成，别手改。
+ *
+ * 卡片上写 doc: "名字"，详情视图打开时才下载那一篇（没打开的访客不会付出流量）。
+ * 现在有 ${docNames.length} 篇：${docNames.join("、") || "（还没有）"}
+ */
+
+import type { Document } from "../../src/profile/document";
+
+/** 名字 → 拿正文的那个模块。 */
+const loaders: Record<string, () => Promise<{ document: Document }>> = {
+${docNames.map((n) => `  ${JSON.stringify(n)}: () => import("./${n}"),`).join("\n")}
+};
+
+/** 有哪些正文。 */
+export const documentNames = (): string[] => Object.keys(loaders);
+
+/** 取一篇正文；没有就叫 null。 */
+export async function loadDocument(name: string | undefined): Promise<Document | null> {
+  if (!name) return null;
+  const loader = loaders[name];
+  if (!loader) return null;
+  try {
+    const m = await loader();
+    return m.document;
+  } catch {
+    return null;
+  }
+}
+`,
+  "utf8",
+);
 
 /* ─────────────────────────────── 报告 ─────────────────────────────── */
 
